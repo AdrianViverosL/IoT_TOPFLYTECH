@@ -50,7 +50,7 @@ char auth[] = "ztbiefZ3q7ToS4JnT6auO-I8-8GYy6tD";
 char ssid[] = "PlantaAlta";
 char pass[] = "0123456789.";
 
-const char * udpAddress = "192.168.0.27";
+const char* udpAddress = "192.168.0.27";
 const int udpPort = 7778;
  
 
@@ -60,7 +60,7 @@ static BLEUUID    charUUID("27763561-999c-4d6a-9fc4-c7272be10900");
 
 //BLE objects declaration
 static BLERemoteCharacteristic* pRemoteCharacteristic; 
-static BLEAdvertisedDevice *myDevice;
+static BLEAdvertisedDevice* myDevice;
 static BLEClient* pClient;
 
 //Logic Control Flags
@@ -508,25 +508,7 @@ void FetchData(void * parameter)  // This is a task.
   {
     databuffer[1] = highByte(id);
     databuffer[2] = lowByte(id); 
-  /**
-    if (control == 0){
-      Serial.println("Searching Relay Device");
-      vTaskDelay(2500);
-      checkRelay();
-      vTaskDelay(1000);
-    }
-    else if(control == 1){
-      Serial.println("Searching Temperature Sensor");
-      vTaskDelay(2500);
-      readTempSensor();
-      //vTaskDelay(1000);
-      //Serial.println("   ----- Taking a nap -----");
-      //esp_deep_sleep_start();
-    }else if(control == 2){
-      Serial.println("   ----- Taking a nap -----");
-      esp_deep_sleep_start();
-    }
-  **/
+
     switch (control){
       case 0:
         Serial.println("Searching Relay Device");
@@ -578,22 +560,6 @@ void setup() {
     
   //Set up Deep Sleep Mode
   esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
-
-  /*WiFi.begin(ssid, pass);
-
-  // Wait for connection
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("");
-  Serial.print("Connected to ");
-  Serial.println(ssid);
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());*/
-  //This initializes udp and transfer buffer
-  //udp.begin(udpPort);
-  //Serial.println(databufferLength);
 
   xTaskCreatePinnedToCore(
     FetchData,
