@@ -83,7 +83,7 @@ int humidity;
 
 
 //Buffer Initialization 
-byte  databuffer[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+byte databuffer[] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 const size_t databufferLength = sizeof(databuffer) / sizeof(databuffer[0]);
 
 //Board ID for indetification in the data basis
