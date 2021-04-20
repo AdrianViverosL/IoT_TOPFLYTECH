@@ -47,8 +47,8 @@ WiFiUDP udp;
 char auth[] = "ztbiefZ3q7ToS4JnT6auO-I8-8GYy6tD";
 
 //WiFi credentials
-char ssid[] = "PlantaAlta";
-char pass[] = "0123456789.";
+char ssid[] = "FamVivLu_2.4Gnormal";
+char pass[] = "PedroBigotes";
 
 const char* udpAddress = "192.168.0.27";
 const int udpPort = 7778;
@@ -60,7 +60,7 @@ static BLEUUID    charUUID("27763561-999c-4d6a-9fc4-c7272be10900");
 
 //BLE objects declaration
 static BLERemoteCharacteristic* pRemoteCharacteristic; 
-static BLEAdvertisedDevice* myDevice;
+static BLEAdvertisedDevice* myDevice = NULL;
 static BLEClient* pClient;
 
 //Logic Control Flags
@@ -392,8 +392,10 @@ void readTempSensor(){
 
             udpSend(sizeof(databuffer));
            
+
+
             delete myDevice;
-            myDevice = NULL;
+            //myDevice = NULL;
             established = false;
             control = 2;
 
@@ -585,7 +587,6 @@ void setup() {
 }
 
 void loop() {
-
 }
 
 
