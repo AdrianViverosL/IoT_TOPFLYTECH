@@ -44,7 +44,8 @@ WidgetLED scene(V8);
 WiFiUDP udp;
 
 //Auth Token Blynk App
-char auth[] = "ztbiefZ3q7ToS4JnT6auO-I8-8GYy6tD";
+//char auth[] = "ztbiefZ3q7ToS4JnT6auO-I8-8GYy6tD";
+char auth[] = "PnzC0e83XmXJI4FjKcsWVbr45HsL2LUx";
 
 //WiFi credentials
 char ssid[] = "FamVivLu_2.4Gnormal";
@@ -535,10 +536,13 @@ void FetchData(void * parameter)  // This is a task.
 
 void TaskWifi(void * parameter)  // This is a task.
 {  
+  
   Blynk.connectWiFi(ssid, pass);
   Blynk.config(auth, "blynk-cloud.com", 80);
   Blynk.connect();
+  
 
+  //Blynk.begin("SNgckDu5vaB52p8CQQiHnNs-4m-lgjsH3F", ssid, pass);
   //This initializes udp and transfer buffer
   udp.begin(udpPort);
 
