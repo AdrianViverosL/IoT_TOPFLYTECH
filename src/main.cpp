@@ -44,11 +44,11 @@ WidgetLED scene(V8);
 WiFiUDP udp;
 
 //Auth Token Blynk App
-char auth[] = "ztbiefZ3q7ToS4JnT6auO-I8-8GYy6tD";
+char auth[] = "PnzC0e83XmXJI4FjKcsWVbr45HsL2LUx";
 
 //WiFi credentials
-char ssid[] = "PlantaAlta";
-char pass[] = "0123456789.";
+char ssid[] = "FamVivLu_2.4Gnormal";
+char pass[] = "PedroBigotes";
 
 const char * udpAddress = "192.168.0.27";
 const int udpPort = 7778;
@@ -335,9 +335,7 @@ void insertMACintoBuffer(){
 void controlRelay(){
 
     if(Serial.available()){
-      String incomingData = Serial.readStringUntil('\n');
-      //Serial.println(incomingData);
-      
+      String incomingData = Serial.readStringUntil('\n');     
       if(incomingData.equals("a")){
         Serial.println("Turnning ON");
         uint8_t preTrama2[] = {0x36, 0x35, 0x34, 0x33, 0x32, 0x31, 0x6c, 0x01};
@@ -390,15 +388,12 @@ void readTempSensor(){
             delay(500);
             Serial.println("         Done");
 
-            udpSend(sizeof(databuffer));
+            //udpSend(sizeof(databuffer));
            
             delete myDevice;
             myDevice = NULL;
             established = false;
             control = 2;
-
-            //Serial.println("   ----- Taking a nap -----");
-            //esp_deep_sleep_start();
             }
         } 
       }
@@ -421,12 +416,10 @@ void readTempSensor(){
       Serial.println("         Done");
 
       //Send frame to the server using UDP
-      udpSend(5);
+      //udpSend(5);
 
       srchlmt = 0;
       control = 2;
-      //Serial.println("   ----- Taking a nap -----");
-      //esp_deep_sleep_start();
     }
     srchlmt++;
   }
@@ -447,7 +440,6 @@ void checkRelay(){
           uint8_t crcValRe = xCal_crc((uint8_t*)preTramaRe, 7);
           const uint8_t tramaRe[] = {0x36, 0x35, 0x34, 0x33, 0x32, 0x31, 0x6d, crcValRe};
           pRemoteCharacteristic->writeValue((uint8_t*)tramaRe, 8, true);
-          //controlRelay();
           control = 1;
           pClient->disconnect(); 
         }
@@ -475,18 +467,17 @@ void checkRelay(){
       MySerial.flush();
       Serial.println("         Done");
 
+      /**
       if(udpSend(5)){
         Serial.println("Data packet UDP sended");  
       }
       else{
         Serial.println("Data packet UDP Failed");
       }
-
+    **/
       srchlmt = 0; 
       control = 1;
       xSemaphoreGive(sema_control);
-      //Serial.println("   ----- Taking a nap -----");
-      //esp_deep_sleep_start();
     }
     srchlmt++;
   }
@@ -508,25 +499,6 @@ void FetchData(void * parameter)  // This is a task.
   {
     databuffer[1] = highByte(id);
     databuffer[2] = lowByte(id); 
-  /**
-    if (control == 0){
-      Serial.println("Searching Relay Device");
-      vTaskDelay(2500);
-      checkRelay();
-      vTaskDelay(1000);
-    }
-    else if(control == 1){
-      Serial.println("Searching Temperature Sensor");
-      vTaskDelay(2500);
-      readTempSensor();
-      //vTaskDelay(1000);
-      //Serial.println("   ----- Taking a nap -----");
-      //esp_deep_sleep_start();
-    }else if(control == 2){
-      Serial.println("   ----- Taking a nap -----");
-      esp_deep_sleep_start();
-    }
-  **/
     switch (control){
       case 0:
         Serial.println("Searching Relay Device");
@@ -551,20 +523,17 @@ void FetchData(void * parameter)  // This is a task.
 
 void TaskWifi(void * parameter)  // This is a task.
 {  
-  Blynk.connectWiFi(ssid, pass);
+  /**
+   * Blynk.connectWiFi(ssid, pass);
   Blynk.config(auth, "blynk-cloud.com", 80);
-  Blynk.connect();
+  Blynk.connect();**/
 
+  Blynk.begin(auth, ssid, pass);
   //This initializes udp and transfer buffer
-  udp.begin(udpPort);
+  //udp.begin(udpPort);
 
   for(;;)
   { 
-    /*if(xSemaphoreTake(sema_control, portMAX_DELAY) == pdPASS){
-      //Serial.println("Updating data to cloud");
-      Blynk.run();
-      xSemaphoreGive(sema_control);
-    } */ 
     Blynk.run();
   }
 }
@@ -574,26 +543,9 @@ void setup() {
   Serial.begin(115200);
   MySerial.begin(115200, SERIAL_8N1, 34, 32);
   Serial.println("Starting IoT Truck System...");
-  //MySerial.println("Comunicacion serial 2 establecida");
-    
+
   //Set up Deep Sleep Mode
   esp_sleep_enable_timer_wakeup(TIME_TO_SLEEP * uS_TO_S_FACTOR);
-
-  /*WiFi.begin(ssid, pass);
-
-  // Wait for connection
-  while (WiFi.status() != WL_CONNECTED) {
-    delay(500);
-    Serial.print(".");
-  }
-  Serial.println("");
-  Serial.print("Connected to ");
-  Serial.println(ssid);
-  Serial.print("IP address: ");
-  Serial.println(WiFi.localIP());*/
-  //This initializes udp and transfer buffer
-  //udp.begin(udpPort);
-  //Serial.println(databufferLength);
 
   xTaskCreatePinnedToCore(
     FetchData,
